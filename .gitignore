@@ -1,0 +1,9 @@
+bin/
+obj/
+.vscode/
+*.exe
+*.dll
+*.pdb
+*.user
+*.suo
+Distribuicao/
