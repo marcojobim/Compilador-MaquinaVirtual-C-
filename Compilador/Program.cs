@@ -10,7 +10,17 @@ namespace Compilador
             try
             {
                 // 1. Ler o arquivo
-                string codigo = File.ReadAllText("correto.php.txt");
+                string arquivo = args.Length > 0 ? args[0] : "correto.php.txt";
+
+                if (!File.Exists(arquivo))
+                {
+                    Console.WriteLine($"[ERRO] Arquivo de entrada '{arquivo}' não encontrado.");
+                    Console.WriteLine("Certifique-se de que o arquivo está na mesma pasta do executável.");
+                    return;
+                }
+
+                Console.WriteLine($"Compilando: {arquivo}...");
+                string codigo = File.ReadAllText(arquivo);
                 Console.WriteLine("Código lido com sucesso!");
 
                 // 2. Análise Léxica

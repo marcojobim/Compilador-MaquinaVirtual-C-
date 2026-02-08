@@ -59,18 +59,18 @@ Uma CPU baseada em pilha com instruções de:
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git](https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git)
-   cd SEU_REPOSITORIO
+   git clone [https://github.com/marcojobim/Compilador-MaquinaVirtual-C-.git](https://github.com/marcojobim/Compilador-MaquinaVirtual-C-.git)
+   cd Compilador-MaquinaVirtual-C-
 
 2. **Compile e Gere o Código Obejto**
     ```bash
-    dotnet run --project Compilador -- correto.php.txt
+    dotnet run --project Compilador -- codigo_fonte.txt
 
 3. **Execute o Código Objeto na Máquina Virutal**
     ```bash
-    dotnet run --project VM -- teste.txt
+    dotnet run --project VM -- codigo_objeto.txt
 
-## 💡 Dicas Adicionais
-- **O arquivo correto.php.txt deve estar acessível (na raiz ou passando o caminho completo).**
-- **Se você executar a VM sem argumentos (dotnet run --project VM), ela buscará automaticamente pelo arquivo padrão teste.txt.**
+##  Observações
+- **O arquivo de entrada deve ser passado por parametro para o programa, caso não seja, o compilador procurará pelo arquivo padrão "correto.php.txt"**
+- **Da mesma forma se você executar a VM sem argumentos, ela buscará automaticamente pelo arquivo padrão teste.txt.**
 
