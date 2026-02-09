@@ -96,6 +96,19 @@ namespace Compilador
             return count;
         }
 
+        public int ContarApenasVariaveisLocais(string escopo)
+        {
+            int count = 0;
+            foreach (var s in _tabela.Values)
+            {
+                if (s.Escopo == escopo && s.Categoria == "variavel")
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         public List<Simbolo> ObterParametrosEscopo(string escopo)
         {
             var parametros = new List<Simbolo>();

@@ -105,11 +105,24 @@ namespace Compilador
             string nome = TokenAtual.Valor;
             Match(TipoToken.VAR_NAME);
 
-            _tabela.Declarar(nome, "real", "variavel", _escopoAtual);
+            bool existe = false;
+            try
+            {
+                var sim = _tabela.Recuperar(nome, _escopoAtual);
+                if (sim != null) existe = true;
+            }
+            catch
+            {
+                existe = false;
+            }
+
+            if (!existe)
+            {
+                _tabela.Declarar(nome, "real", "variavel", _escopoAtual);
+                Gerador.Adicionar("ALME 1");
+            }
+
             var simbolo = _tabela.Recuperar(nome, _escopoAtual);
-
-            Gerador.Adicionar("ALME 1");
-
             Atribuicao_opcional(simbolo);
         }
 
@@ -161,12 +174,12 @@ namespace Compilador
             Corpo_f();
             Match(TipoToken.RBRACE);
 
-            /*int totalParaDesempilhar = _tabela.ContarVariaveisEscopo(nomeFuncao);
+            int totalParaDesempilhar = _tabela.ContarApenasVariaveisLocais(nomeFuncao);
 
             if (totalParaDesempilhar > 0)
             {
                 Gerador.Adicionar($"DESM {totalParaDesempilhar}");
-            }*/
+            }
 
             Gerador.Adicionar("RTPR");
 
@@ -422,13 +435,13 @@ namespace Compilador
             Expressao();
             switch (op)
             {
-                case "==": Gerador.Adicionar("CPMI"); break;
-                case ">": Gerador.Adicionar("CMMA"); break;
-                case "<": Gerador.Adicionar("CMME"); break;
+                case "==": Gerador.Adicionar("CPIG"); break;
+                case ">": Gerador.Adicionar("CPMA"); break;
+                case "<": Gerador.Adicionar("CPME"); break;
                 case ">=": Gerador.Adicionar("CMAI"); break;
-                case "<=": Gerador.Adicionar("CMEI"); break;
+                case "<=": Gerador.Adicionar("CPMI"); break;
                 case "<>":
-                case "!=": Gerador.Adicionar("DIF"); break;
+                case "!=": Gerador.Adicionar("CDES"); break;
                 default:
                     throw new Exception($"Operador relacional desconhecido: {op}");
             }

@@ -14,12 +14,11 @@ namespace VM
 
         static void Main(string[] args)
         {
-            string caminhoArquivo = args.Length > 0 ? args[0] : "teste.txt"; // Caso não queira passar o arquivo por parâmetro é só alterar o teste.txt para o arquivo desejado
+            string caminhoArquivo = args.Length > 0 ? args[0] : "teste.txt";
 
             if (!File.Exists(caminhoArquivo))
             {
                 Console.WriteLine($"[ERRO] Arquivo '{caminhoArquivo}' não encontrado.");
-                Console.WriteLine("Certifique-se de que o compilador gerou o arquivo na mesma pasta.");
                 return;
             }
 
@@ -35,7 +34,6 @@ namespace VM
             {
                 Console.WriteLine();
                 Console.WriteLine($"[CRASH] Erro fatal na linha {PC}: {ex.Message}");
-                Console.WriteLine($"Comando: {Instrucoes[PC]}");
             }
         }
 
@@ -57,6 +55,7 @@ namespace VM
 
                 switch (comando)
                 {
+                    // --- 1. CONTROLE DE PROGRAMA E MEMÓRIA ---
                     case "INPP":
                         PC++;
                         break;
@@ -64,15 +63,33 @@ namespace VM
                     case "PARA":
                         return;
 
+                    case "ALME":
+                        int qtdAlme = int.Parse(param);
+                        for (int i = 0; i < qtdAlme; i++)
+                        {
+                            Pilha.Push(0.0);
+                        }
+                        PC++;
+                        break;
+
+                    case "DESM":
+                        int qtdDesm = int.Parse(param);
+                        for (int i = 0; i < qtdDesm; i++)
+                        {
+                            if (Pilha.Count > 0) Pilha.Pop();
+                        }
+                        PC++;
+                        break;
+
+                    // --- 2. MOVIMENTAÇÃO DE DADOS ---
                     case "CRCT":
                         Pilha.Push(double.Parse(param, CultureInfo.InvariantCulture));
                         PC++;
                         break;
 
                     case "CRVL":
-                    case "PARAM":
-                        int endCrvl = int.Parse(param);
-                        Pilha.Push(Memoria[endCrvl]);
+                        int endCrval = int.Parse(param);
+                        Pilha.Push(Memoria[endCrval]);
                         PC++;
                         break;
 
@@ -82,10 +99,13 @@ namespace VM
                         PC++;
                         break;
 
-                    case "ALME":
+                    case "PARAM":
+                        int endParam = int.Parse(param);
+                        Pilha.Push(Memoria[endParam]);
                         PC++;
                         break;
 
+                    // --- 3. ARITMÉTICA (CORRIGIDO AQUI) ---
                     case "SOMA":
                         double bSoma = Pilha.Pop();
                         double aSoma = Pilha.Pop();
@@ -96,67 +116,95 @@ namespace VM
                     case "SUBT":
                         double bSub = Pilha.Pop();
                         double aSub = Pilha.Pop();
-                        Pilha.Push(aSub - bSub);
+                        Pilha.Push(aSub - bSub); // Corrigido: aSub em vez de aSoma
                         PC++;
                         break;
 
                     case "MULT":
                         double bMult = Pilha.Pop();
                         double aMult = Pilha.Pop();
-                        Pilha.Push(aMult * bMult);
+                        Pilha.Push(aMult * bMult); // Corrigido: aMult em vez de aSoma
                         PC++;
                         break;
 
                     case "DIVI":
                         double bDiv = Pilha.Pop();
                         double aDiv = Pilha.Pop();
-                        if (bDiv == 0) throw new DivideByZeroException("Divisão por zero");
-                        Pilha.Push(aDiv / bDiv);
+                        if (bDiv == 0) throw new DivideByZeroException();
+                        Pilha.Push(aDiv / bDiv); // Corrigido: aDiv em vez de aSoma
                         PC++;
                         break;
 
-                    case "CMMA":
-                        double bMaior = Pilha.Pop();
-                        double aMaior = Pilha.Pop();
-                        Pilha.Push(aMaior > bMaior ? 1.0 : 0.0);
+                    case "INVE":
+                        double valInve = Pilha.Pop();
+                        Pilha.Push(-valInve);
                         PC++;
                         break;
 
-                    case "CMME":
-                        double bMenor = Pilha.Pop();
-                        double aMenor = Pilha.Pop();
-                        Pilha.Push(aMenor < bMenor ? 1.0 : 0.0);
+                    // --- 4. LÓGICA E COMPARAÇÃO ---
+                    case "CONJ":
+                        double bConj = Pilha.Pop();
+                        double aConj = Pilha.Pop();
+                        Pilha.Push((aConj == 1 && bConj == 1) ? 1.0 : 0.0);
                         PC++;
                         break;
 
-                    case "CMAI":
-                        double bMaiorI = Pilha.Pop();
-                        double aMaiorI = Pilha.Pop();
-                        Pilha.Push(aMaiorI >= bMaiorI ? 1.0 : 0.0);
+                    case "DISJ":
+                        double bDisj = Pilha.Pop();
+                        double aDisj = Pilha.Pop();
+                        Pilha.Push((aDisj == 1 || bDisj == 1) ? 1.0 : 0.0);
                         PC++;
                         break;
 
-                    case "CMEI":
-                        double bMenorI = Pilha.Pop();
-                        double aMenorI = Pilha.Pop();
-                        Pilha.Push(aMenorI <= bMenorI ? 1.0 : 0.0);
+                    case "NEGA":
+                        double valNega = Pilha.Pop();
+                        Pilha.Push(1.0 - valNega);
+                        PC++;
+                        break;
+
+                    case "CPME":
+                        double bCpme = Pilha.Pop();
+                        double aCpme = Pilha.Pop();
+                        Pilha.Push(aCpme < bCpme ? 1.0 : 0.0);
+                        PC++;
+                        break;
+
+                    case "CPMA":
+                        double bCpma = Pilha.Pop();
+                        double aCpma = Pilha.Pop();
+                        Pilha.Push(aCpma > bCpma ? 1.0 : 0.0);
+                        PC++;
+                        break;
+
+                    case "CPIG":
+                        double bCpig = Pilha.Pop();
+                        double aCpig = Pilha.Pop();
+                        Pilha.Push(aCpig == bCpig ? 1.0 : 0.0);
+                        PC++;
+                        break;
+
+                    case "CDES":
+                        double bCdes = Pilha.Pop();
+                        double aCdes = Pilha.Pop();
+                        Pilha.Push(aCdes != bCdes ? 1.0 : 0.0);
                         PC++;
                         break;
 
                     case "CPMI":
-                        double bIgual = Pilha.Pop();
-                        double aIgual = Pilha.Pop();
-                        Pilha.Push(aIgual == bIgual ? 1.0 : 0.0);
+                        double bCpmi = Pilha.Pop();
+                        double aCpmi = Pilha.Pop();
+                        Pilha.Push(aCpmi <= bCpmi ? 1.0 : 0.0);
                         PC++;
                         break;
 
-                    case "DIF":
-                        double bDif = Pilha.Pop();
-                        double aDif = Pilha.Pop();
-                        Pilha.Push(aDif != bDif ? 1.0 : 0.0);
+                    case "CMAI":
+                        double bCmai = Pilha.Pop();
+                        double aCmai = Pilha.Pop();
+                        Pilha.Push(aCmai >= bCmai ? 1.0 : 0.0);
                         PC++;
                         break;
 
+                    // --- 5. DESVIO E PROCEDIMENTOS ---
                     case "DSVI":
                         PC = int.Parse(param);
                         break;
@@ -183,32 +231,18 @@ namespace VM
                         break;
 
                     case "RTPR":
-                        int enderecoRetorno = (int)Pilha.Pop();
-                        PC = enderecoRetorno;
+                        int endRetorno = (int)Pilha.Pop();
+                        PC = endRetorno;
                         break;
 
-                    case "DESM":
-                        int n = int.Parse(param);
-                        for (int i = 0; i < n; i++)
-                        {
-                            if (Pilha.Count > 0) Pilha.Pop();
-                        }
-                        PC++;
-                        break;
-
+                    // --- 6. E/S ---
                     case "LEIT":
                         Console.Write("DIGITE UM VALOR > ");
                         string entrada = Console.ReadLine() ?? "0";
-
                         if (double.TryParse(entrada.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out double valorLido))
-                        {
                             Pilha.Push(valorLido);
-                        }
                         else
-                        {
-                            Console.WriteLine("Valor inválido. Usando 0.0");
                             Pilha.Push(0.0);
-                        }
                         PC++;
                         break;
 
