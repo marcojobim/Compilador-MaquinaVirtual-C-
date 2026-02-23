@@ -116,14 +116,14 @@ namespace VM
                     case "SUBT":
                         double bSub = Pilha.Pop();
                         double aSub = Pilha.Pop();
-                        Pilha.Push(aSub - bSub); // Corrigido: aSub em vez de aSoma
+                        Pilha.Push(aSub - bSub);
                         PC++;
                         break;
 
                     case "MULT":
                         double bMult = Pilha.Pop();
                         double aMult = Pilha.Pop();
-                        Pilha.Push(aMult * bMult); // Corrigido: aMult em vez de aSoma
+                        Pilha.Push(aMult * bMult);
                         PC++;
                         break;
 
@@ -131,7 +131,7 @@ namespace VM
                         double bDiv = Pilha.Pop();
                         double aDiv = Pilha.Pop();
                         if (bDiv == 0) throw new DivideByZeroException();
-                        Pilha.Push(aDiv / bDiv); // Corrigido: aDiv em vez de aSoma
+                        Pilha.Push(aDiv / bDiv);
                         PC++;
                         break;
 
